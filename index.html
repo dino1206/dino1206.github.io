@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    v3
+    v4
     <form id="converter">
         <label for="input-temp">temperature</label>
         <input type="text" id="input-temp" name="input-temp" value="20" />
@@ -35,19 +35,18 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(reg => {
-                    // registration worked
-                    console.log('[Service Worker] Registration succeeded. Scope is ' + reg.scope);
 
                     if ('Notification' in window) {
-                        console.log('Notification permission default status:', Notification.permission);
+
                         Notification.requestPermission(function (status) {
                             console.log('Notification permission status:', status);
+                            displayNotification();
                         });
                     }
+
+                    console.log('[Service Worker] register end');
                 }).catch(error => {
-                    // registration failed
-                    console.log('[Service Worker] Registration failed with ' + error);
-                    alert('Service Worker registration failed: ' + error);
+
                 });
         }
 
