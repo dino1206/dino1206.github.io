@@ -48,3 +48,17 @@ self.addEventListener('notificationclick', event => {
     console.log('notificationclick action is', action);
 })
 
+self.addEventListener('push', event => {
+    console.log('[Service Worker] Push Received.');
+    let title = 'Server Push';
+    let options = {
+        body: 'push TEST',
+        icon: './assets/images/android_048.png'
+    };
+    if (event.data) {
+        options = event.data.json();
+        title = options.title;
+    }
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
