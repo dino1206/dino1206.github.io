@@ -53,6 +53,9 @@ function askForNotificationPermission() {
     });
 }
 
+// Define and initialize enableNotificationButtons
+var enableNotificationButtons = document.querySelectorAll('.enable-notification');
+
 if ('Notification' in window) {
     for (var i = 0; i < enableNotificationButtons.length; i++) {
         enableNotificationButtons[i].style.display = 'inline-block';
