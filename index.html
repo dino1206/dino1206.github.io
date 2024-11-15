@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    v4
+    v5
     <form id="converter">
         <label for="input-temp">temperature</label>
         <input type="text" id="input-temp" name="input-temp" value="20" />
@@ -61,7 +61,8 @@
                             link: 'https://www.itc.ntnu.edu.tw/'
                         }
                     };
-
+                    reg.showNotification('Angular User Group Taiwan', options);
+                    console.log('displayNotification');
                 });
             }
         }
