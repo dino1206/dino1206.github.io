@@ -53,23 +53,4 @@ function askForNotificationPermission() {
     });
 }
 
-// Define and initialize enableNotificationButtons
-var enableNotificationButtons = document.querySelectorAll('.enable-notification');
 
-if ('Notification' in window) {
-    for (var i = 0; i < enableNotificationButtons.length; i++) {
-        enableNotificationButtons[i].style.display = 'inline-block';
-        enableNotificationButtons[i].addEventListener('click', askForNotificationPermission);
-    }
-}
-
-function displayConfirmNotification() {
-    if ('serviceWorker' in navigator) {
-        var options = {
-            body: '您已成功訂閱我們的推播服務!'
-        }
-        navigator.serviceWorker.ready.then(function (swreg) {
-            swreg.showNotification('成功訂閱!! (from Service Worker)', options);
-        });
-    }
-}
