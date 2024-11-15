@@ -18,11 +18,19 @@ self.addEventListener('fetch', event => {
 
         // Get the resource from the cache.
         const cachedResponse = await cache.match(event.request);
-        const fetchPromise = fetch(event.request).then(networkResponse => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-        });
+        if (cachedResponse) {
+            return cachedResponse;
+        } else {
+            try {
+                // If the resource was not in the cache, try the network.
+                const fetchResponse = await fetch(event.request);
 
-        return cachedResponse || fetchPromise;
+                // Save the resource in the cache and return it.
+                cache.put(event.request, fetchResponse.clone());
+                return fetchResponse;
+            } catch (e) {
+                // The network failed.
+            }
+        }
     })());
 });
