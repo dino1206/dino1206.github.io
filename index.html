@@ -11,7 +11,7 @@
 </head>
 
 <body>
-
+    <button id="enableNotifications">啟用通知</button>
     <form id="converter">
         <label for="input-temp">temperature</label>
         <input type="text" id="input-temp" name="input-temp" value="20" />
@@ -51,6 +51,19 @@
                 });
         }
 
+        document.getElementById('enableNotifications').addEventListener('click', function () {
+            if ('Notification' in window) {
+                console.log('Notification permission default status:', Notification.permission);
+                Notification.requestPermission(function (status) {
+                    console.log('Notification permission status:', status);
+                    if (status === 'granted') {
+                        new Notification('通知已啟用！');
+                    }
+                });
+            }
+        });
+
+
     </script>
 
     <div id="ip-address">正在获取IP地址...</div>
@@ -82,3 +95,8 @@
 
 
 </html>
+
+
+
+
+</body>
