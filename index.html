@@ -47,8 +47,10 @@
                 }).catch(error => {
                     // registration failed
                     console.log('[Service Worker] Registration failed with ' + error);
+                    alert('Service Worker registration failed: ' + error);
                 });
         }
+
     </script>
 
     <div id="ip-address">正在获取IP地址...</div>
