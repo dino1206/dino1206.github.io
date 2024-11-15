@@ -55,12 +55,17 @@
         document.getElementById('enableNotifications').addEventListener('click', function () {
             if ('Notification' in window) {
                 console.log('Notification permission default status:', Notification.permission);
-                Notification.requestPermission(function (status) {
-                    console.log('Notification permission status:', status);
-                    if (status === 'granted') {
-                        new Notification('通知已啟用！');
-                    }
-                });
+
+                if (Notification.permission === 'default' || Notification.permission === 'denied') {
+                    Notification.requestPermission(function (status) {
+                        console.log('Notification permission status:', status);
+                        if (status === 'granted') {
+                            new Notification('通知已啟用！');
+                        }
+                    });
+                } else if (Notification.permission === 'granted') {
+                    new Notification('通知已啟用！');
+                }
             }
         });
 
