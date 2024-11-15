@@ -35,6 +35,7 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(reg => {
+                    subscribeUser(reg);
 
                     if ('Notification' in window) {
 
@@ -49,6 +50,40 @@
 
                 });
         }
+
+        const applicationServerPublicKey = `BMGvyOqVa3XhFjTBSd4CLc-vHc6W-CO51uW7Na9kt0R9WU3hmbQ7SaKHgTBcYgzIh5yi41jkk7vGrr_t7hycaFw`;
+
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        function subscribeUser(swRegistration) {
+            const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+            swRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey
+            })
+                .then(subscription => {
+                    console.log('User is subscribed');
+                    console.log(JSON.stringify(subscription));
+                })
+                .catch(err => {
+                    console.log('Failed to subscribe the user: ', err);
+                });
+        }
+
+
 
         function displayNotification() {
             if (Notification.permission == 'granted') {
