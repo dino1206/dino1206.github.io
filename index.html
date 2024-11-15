@@ -36,6 +36,29 @@
         }
     </script>
 
+    <div id="ip-address">正在获取IP地址...</div>
+    <script>
+        // 1. 发送请求到IPify API获取用户IP地址
+        fetch('https://api.ipify.org?format=json')
+            .then(response => {
+                // 2. 将响应转换为JSON格式
+                return response.json();
+            })
+            .then(data => {
+                // 3. 获取JSON数据中的IP地址
+                const ipAddress = data.ip;
+
+                // 4. 在页面上显示IP地址
+                const ipDisplayElement = document.getElementById('ip-address');
+                ipDisplayElement.textContent = `您的IP地址是：${ipAddress}`;
+            })
+            .catch(error => {
+                // 5. 处理错误情况
+                console.error('获取IP地址时发生错误：', error);
+                const ipDisplayElement = document.getElementById('ip-address');
+                ipDisplayElement.textContent = '无法获取您的IP地址';
+            });
+    </script>
 
 </body>
 
