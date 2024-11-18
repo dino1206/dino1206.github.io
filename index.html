@@ -1,143 +1,63 @@
 <!DOCTYPE html>
-<html lang="en-US" dir="ltr">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="shortcut icon" href="https://c.s-microsoft.com/favicon.ico?v2" />
-    <link rel="manifest" href="/manifest.json">
-    <title>Temperature converter</title>
-    <link rel="stylesheet" href="converter.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA with FCM</title>
 </head>
-
 <body>
-    v7
-    <form id="converter">
-        <label for="input-temp">temperature</label>
-        <input type="text" id="input-temp" name="input-temp" value="20" />
-        <label for="input-unit">from</label>
-        <select id="input-unit" name="input-unit">
-            <option value="c" selected>Celsius</option>
-            <option value="f">Fahrenheit</option>
-            <option value="k">Kelvin</option>
-        </select>
-        <label for="output-unit">to</label>
-        <select id="output-unit" name="output-unit">
-            <option value="c">Celsius</option>
-            <option value="f" selected>Fahrenheit</option>
-            <option value="k">Kelvin</option>
-        </select>
-        <output name="output-temp" id="output-temp" for="input-temp input-unit output-unit">68 F</output>
-    </form>
-    <script src="converter.js"></script>
+  <h1>PWA with FCM Push Notifications</h1>
+  <button id="subscribe">Subscribe to Notifications</button>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging.js";
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => {
-                    subscribeUser(reg);
+	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+	const firebaseConfig = {
+	  apiKey: "AIzaSyC6aaGbABDxCwGDvEnR2dsKFog2lgekshI",
+	  authDomain: "pwa114.firebaseapp.com",
+	  projectId: "pwa114",
+	  storageBucket: "pwa114.firebasestorage.app",
+	  messagingSenderId: "665617311410",
+	  appId: "1:665617311410:web:bbc9f3a25204c0b9338bab",
+	  measurementId: "G-7TG5F5SRZV"
+	};
 
-                    if ('Notification' in window) {
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
 
-                        Notification.requestPermission(function (status) {
-                            console.log('Notification permission status:', status);
-                            // displayNotification();
-                        });
-                    }
-
-                    console.log('[Service Worker] register end');
-                }).catch(error => {
-
-                });
-        }
-
-        const applicationServerPublicKey = `BMGvyOqVa3XhFjTBSd4CLc-vHc6W-CO51uW7Na9kt0R9WU3hmbQ7SaKHgTBcYgzIh5yi41jkk7vGrr_t7hycaFw`;
-
-        function urlB64ToUint8Array(base64String) {
-            const padding = '='.repeat((4 - base64String.length % 4) % 4);
-            const base64 = (base64String + padding)
-                .replace(/\-/g, '+')
-                .replace(/_/g, '/');
-
-            const rawData = window.atob(base64);
-            const outputArray = new Uint8Array(rawData.length);
-
-            for (let i = 0; i < rawData.length; ++i) {
-                outputArray[i] = rawData.charCodeAt(i);
+    // Request permission and get token
+    document.getElementById('subscribe').addEventListener('click', () => {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          getToken(messaging, { vapidKey: 'YOUR_PUBLIC_VAPID_KEY' }).then(currentToken => {
+            if (currentToken) {
+              console.log('Token:', currentToken);
+              // Send the token to your server and save it
+            } else {
+              console.log('No registration token available. Request permission to generate one.');
             }
-            return outputArray;
+          }).catch(err => {
+            console.log('An error occurred while retrieving token. ', err);
+          });
         }
+      });
+    });
 
-        function subscribeUser(swRegistration) {
-            const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
-            swRegistration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: applicationServerKey
-            })
-                .then(subscription => {
-                    console.log('User is subscribed');
-                    console.log(JSON.stringify(subscription));
-                })
-                .catch(err => {
-                    console.log('Failed to subscribe the user: ', err);
-                });
-        }
+    // Handle incoming messages
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      // Customize notification here
+      const notificationTitle = 'FCM Message';
+      const notificationOptions = {
+        body: payload.notification.body,
+        icon: '/firebase-logo.png'
+      };
 
-
-
-        function displayNotification() {
-            if (Notification.permission == 'granted') {
-                navigator.serviceWorker.getRegistration().then(reg => {
-                    var options = {
-                        icon: './assets/images/android_048.png',
-                        body: '歡迎加入 Angular 社群',
-                        image: 'https://augt-forum-upload.s3-ap-southeast-1.amazonaws.com/original/1X/6b3cd55281b7bedea101dc36a6ef24034806390b.png',
-                        data: {
-                            link: 'https://www.itc.ntnu.edu.tw/'
-                        }
-                    };
-                    reg.showNotification('Angular User Group Taiwan', options);
-                    console.log('displayNotification');
-
-                });
-            }
-        }
-
-
-
-    </script>
-
-    <div id="ip-address">正在获取IP地址...</div>
-    <script>
-        // 1. 发送请求到IPify API获取用户IP地址
-        fetch('https://api.ipify.org?format=json')
-            .then(response => {
-                // 2. 将响应转换为JSON格式
-                return response.json();
-            })
-            .then(data => {
-                // 3. 获取JSON数据中的IP地址
-                const ipAddress = data.ip;
-
-                // 4. 在页面上显示IP地址
-                const ipDisplayElement = document.getElementById('ip-address');
-                ipDisplayElement.textContent = `您的IP地址是：${ipAddress}`;
-            })
-            .catch(error => {
-                // 5. 处理错误情况
-                console.error('获取IP地址时发生错误：', error);
-                const ipDisplayElement = document.getElementById('ip-address');
-                ipDisplayElement.textContent = '无法获取您的IP地址';
-            });
-    </script>
-
+      new Notification(notificationTitle, notificationOptions);
+    });
+  </script>
 </body>
-
-
-
 </html>
-
-
-
-
-</body>
