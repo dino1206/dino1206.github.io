@@ -62,3 +62,29 @@ self.addEventListener('push', event => {
 
     event.waitUntil(self.registration.showNotification(title, options));
 });
+
+
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts('https://www.gstatic.com/firebasejs/5.7.0/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/5.7.0/firebase-messaging.js');
+
+workbox.clientsClaim();
+workbox.skipWaiting();
+
+workbox.precaching.precacheAndRoute([
+    // 要快取的檔案
+]);
+
+// firebase config
+var config = {
+    apiKey: "AIzaSyC6aaGbABDxCwGDvEnR2dsKFog2lgekshI",
+    authDomain: "pwa114.firebaseapp.com",
+    projectId: "pwa114",
+    storageBucket: "pwa114.firebasestorage.app",
+    messagingSenderId: "665617311410",
+    appId: "1:665617311410:web:cdb0e1ac4e0a7cc9338bab",
+    measurementId: "G-S46CE8PT24",
+};
+firebase.initializeApp(config);
+
+var messaging = firebase.messaging();
