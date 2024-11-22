@@ -132,3 +132,54 @@ window.addEventListener('load', function () {
     });
 
 });
+
+messaging.onMessage(function (payload) {
+    var msgTitle = payload.data.title;
+    var url = payload.data.click_action;
+    var notification = new Notification(msgTitle, payload.data);
+
+    // 點擊推播後要連去哪
+    notification.addEventListener('click', function () {
+        e.preventDefault();
+        location.href = url;
+    });
+});
+
+var click_action;
+
+// 監聽notifiction點擊事件
+self.addEventListener('notificationclick', function (event) {
+    var url = click_action;
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({
+            type: 'window'
+        }).then(windowClients => {
+            // 如果tab是開著的，就 focus 這個tab
+            for (var i = 0; i < windowClients.length; i++) {
+                var client = windowClients[i];
+                if (client.url === url && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            // 如果沒有，就新增tab
+            if (clients.openWindow) {
+                return clients.openWindow(click_action);
+            }
+        })
+    );
+});
+
+// FCM
+messaging.setBackgroundMessageHandler(function (payload) {
+    var data = payload.data;
+    var title = data.title;
+    var options = {
+        body: data.body,
+        icon: '/logo/logo192.png',
+        badge: '/logo/logo192.png'
+    };
+    click_action = data.click_action;
+
+    return self.registration.showNotification(title, options);
+});
