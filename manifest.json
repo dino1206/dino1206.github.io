@@ -8,6 +8,7 @@
     "theme_color": "#2f3d58",
     "orientation": "any",
     "display": "standalone",
+    "gcm_sender_id": "103953800507",
     "icons": [
         {
             "src": "/icon512.png",
